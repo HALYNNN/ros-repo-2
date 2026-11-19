@@ -1,3 +1,37 @@
+# 📌 My Role & Key Contributions (장하린)
+
+> **애드인에듀 AI 로봇 자율주행 FINAL PROJECT** · 2024.04.17 ~ 2024.06.13 · 6명 · 🏆 **최우수상** (2024.06.14)
+>
+> 이 레포지토리는 6인 팀 프로젝트입니다. 아래는 그중 **장하린**이 담당한 역할과 트러블슈팅을 정리한 것이며, 팀 전체 README는 이 섹션 아래에 원문 그대로 보존했습니다.
+
+## 담당 역할
+
+- **SLAM 맵핑** — LiDAR·카메라 센서로 환경 데이터를 수집하고 로컬 맵 생성
+- **DB 구축 및 통합 관리** — MySQL로 로봇 상태·작업 기록 DB를 구축하고 ROS2 실시간 데이터 연동
+- **관제 GUI 개발** — PyQt5 기반 소비자(주문·재고)·관리자(관제·로봇 위치/충돌/작업 내역) GUI 구현
+- **모듈 간 송수신 검증** — Robot(지게차형 AMR 3대) ↔ Server(Task Allocator, ROS Bridge WebSocket, Domain Bridge, MySQL) ↔ Client(GUI) 간 연동 검증 및 오류 수정
+
+## 핵심 트러블슈팅
+
+### 1. 진열대 장애물 충돌 및 LiDAR 인식 오차 보정
+
+- **문제** — 경로 샘플 포인트가 검출되지 않고, 로봇 실제 크기와 LiDAR 인식 크기 사이에 오차가 있어 진열대 장애물과 충돌이 발생
+- **해결** — 7×4 그리드로 경유지를 생성하고, 목표로 이동할 때 방향 벡터 가중치를 계산해 경로를 결정. 로봇 간 토픽으로 그리드 위치를 공유
+- **결과** — 충돌 회피 및 최단 경로 계획 달성
+
+### 2. 실시간 위치 표시 중 PyQt GUI 화면 멈춤·크래시 해결
+
+- **문제** — ROS2 → WebSocket → PyQt GUI로 데이터를 갱신하는 과정에서 화면 프리징이 발생
+- **원인 분석** — 단순 전송 주기(Hz) 조정으로는 스레드 간 간섭(Race Condition)이 해결되지 않음을 확인
+- **해결** — QObject 기반 `SignalEmitter` 클래스와 `pyqtSignal`로 비동기 수신 데이터를 메인 스레드에 안전하게 전달하도록 구조 개선
+- **결과** — 프리징·크래시 해소 및 갱신 안정화
+
+## 시연 영상
+
+▶ [최종 시연 영상 보기](https://youtu.be/72EWf1t_NVw) — https://youtu.be/72EWf1t_NVw
+
+---
+
 # AMR Logistics Automation System
 <div align="center">
     <img src="https://github.com/addinedu-ros-4th/ros-repo-2/assets/118419026/dd1da530-6c66-4815-94ef-1b23f385e5c4" width="700" height="300">
